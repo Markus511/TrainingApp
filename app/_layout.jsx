@@ -37,19 +37,12 @@ const StackLayout = () => {
           headerLeft: () => (
             <Button title="Close" onPress={() => router.back()} />
           ),
-        }}
-      />
+          headerRight: () => (
+            <Button title="Save" onPress={() => router.back()} />
 
-<Stack.Screen
-        name="exercise"
-        options={{
-          presentation: "modal",
-          headerLeft: () => (
-            <Button title="Close" onPress={() => router.back()} />
           ),
         }}
       />
-
       <Stack.Screen
         name="(tabs)"
         options={{

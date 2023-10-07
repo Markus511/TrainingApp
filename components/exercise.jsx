@@ -15,13 +15,13 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { icons, COLORS, FONT, SIZES } from "../constants";
 
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { useNavigation } from '@react-navigation/native';
 
 
 
-const Exercise = () => {
+const Exercise = (props) => {
   const navigation = useNavigation();
   const router = useRouter();
   const [eName, setEname] = useState("");
@@ -31,41 +31,10 @@ const Exercise = () => {
   const [weight, setWeight] = useState("");
   const [sets, setSets] = useState("");
   const [defaultInput, setDefaultInput] = useState("reps");
-  const [selectedMuscles, setSelectedMuscles] = useState({});
+  const [exerciseList, setExerciseList] = useState([]);
+  const [exerciseData, setExerciseData] = useState({});
 
-  const muscles = [
-    "Biceps",
-    "Triceps",
-    "Quadriceps",
-    "Hamstrings",
-    "Deltoids",
-    "Pectorals",
-    "Latissimus Dorsi",
-    "Trapezius",
-    "Rhomboids",
-    "Abdominals",
-    "Obliques",
-    "Glutes",
-    "Calves",
-    "Forearms",
-    "Tibialis Anterior",
-    "Serratus Anterior",
-    "Erector Spinae",
-    "Soleus",
-    "Hip Flexors",
-    "Adductors",
-    "Abductors",
-    "Rotator Cuff",
-    "Serratus Posterior",
-    // Add more muscles as needed
-  ];
 
-  const handleToggleMuscle = (muscle) => {
-    setSelectedMuscles((prevState) => ({
-      ...prevState,
-      [muscle]: !prevState[muscle], // Toggle the selected state for the clicked muscle
-    }));
-  };
 
   const handleInputChange = (text) => {
     // Remove any characters that are not numbers or hyphens
@@ -103,47 +72,42 @@ const Exercise = () => {
     }
   };
 
-  const renderItem = ({ item }) => {
-    const isSelected = selectedMuscles[item]; // Check if the muscle is selected
+  useEffect(() => {
+    console.log("Updated exerciseList", exerciseList);
+  }, [exerciseList]);
 
-    return (
-      <TouchableOpacity onPress={() => handleToggleMuscle(item)}>
-        <View
-          style={[
-            styles.muscleItem,
-            isSelected && styles.selectedMuscleItem, // Apply selected style if muscle is selected
-          ]}
-        >
-          <Text style={styles.muscleText}>{item}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+ 
 
   const saveExercise = () => {
 
-    const exerciseData = {
+    const newExerciseData = {
       exerciseName: eName,
       sets: sets,
-      reps: reps,
-      mins: min,
       secs: sec,
+      mins: min,
+      reps: reps,
       weight: weight,
-      targetMuscles: selectedMuscles
     };
+  
+    console.log("New Exercise Data:", newExerciseData);
+  
+    // Update exerciseData state
+    //setExerciseData(newExerciseData);
+  
+    // Update exerciseList state asynchronously using the previous state
+    //setExerciseList(prevExerciseList => [...prevExerciseList, newExerciseData]);
+  
+    // Call the renderData function after state updates are done
+    props.renderData();
 
- 
-      navigation.navigate('modal', { exerciseData });
-    
-
-
-    
-
+    props.updateData(newExerciseData);
+  
+    //console.log("Exercise List after save:", exerciseList);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.upperSection}>
+      <View style={styles.section}>
       <Text style={styles.selectText}>Create a new exercise</Text>
         <TextInput
           style={styles.nameInput}
@@ -241,24 +205,13 @@ const Exercise = () => {
         </View>
         </View>
       </View>
+      
 
-      <View style={styles.midSection}>
-        <Text style={styles.selectText}>Select target muscles</Text>
-        <View style={styles.muscleContainer}>
-          <FlatList
-            data={muscles}
-            renderItem={renderItem}
-            keyExtractor={(item) => item}
-            numColumns={3} // Display 3 muscles in one row
-          />
-        </View>
-      </View>
-
-      <View style={styles.lowerSection}>
+     
       <View style={styles.buttonContainer}>
           <Button title="Save exercise" onPress={() => saveExercise()} />
         </View>
-      </View>
+    
     </SafeAreaView>
   );
 };
@@ -270,19 +223,10 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
     backgroundColor: COLORS.white,
-  },
-  upperSection: {
-  
-
-
-  },
-  midSection: {
-    backgroundColor: COLORS.white,
-    flex: 1,
     
   },
-  lowerSection: {
-    backgroundColor: COLORS.white,  
+  section: {
+    flex: 1,   
   },
   headerText: {
     margin: 4,
