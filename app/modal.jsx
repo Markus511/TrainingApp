@@ -23,6 +23,7 @@ const Modal = (props) => {
   const handleAddExercise = () => {
     setShowExercise(true); // Set showExercise to true to render Exercise component
   };
+  
 
 
 
